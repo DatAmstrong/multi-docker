@@ -1,0 +1,22 @@
+language: generic
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t kocmetehan/react-test -f ./client/Dockerfile.dev ./client
+script:
+  - docker run -e CI=true kocmetehan/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t kocmetehan/multi-client ./client
+  - docker build -t kocmetehan/multi-nginx ./nginx
+  - docker build -t kocmetehan/multi-server ./server
+  - docker build -t kocmetehan/multi-worker ./worker
+
+  #Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #Take those images and push them docker hub
+  - docker push kocmetehan/multi-client
+  - docker push kocmetehan/multi-nginx
+  - docker push kocmetehan/multi-server
+  - docker push kocmetehan/multi-worker
