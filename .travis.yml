@@ -19,4 +19,15 @@ after_success:
   - docker push kocmetehan/multi-client
   - docker push kocmetehan/multi-nginx
   - docker push kocmetehan/multi-server
-  - docker push kocmetehan/multi-worker
+  - docker push kocmetehan/multi-worker  
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-2'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-us-east-2-358983373268'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
